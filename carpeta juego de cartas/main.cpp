@@ -1,3 +1,6 @@
+#include <iostream>
+#include <random>
+#include <algorithm>
 int main() {
     Carta unaCarta(2, 2);
     unaCarta.mostrar();
