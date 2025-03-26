@@ -1,43 +1,32 @@
 #include <iostream>
-#include <random>
+#include <vector>
 #include <algorithm>
+#include <random>
 
-#define  BG_BLACK    "\x1B[40m"
-#define  BG_RED      "\x1B[41m"
-#define  BG_GREEN    "\x1B[42m"
-#define  BG_AMARILLO "\x1B[43m"
-#define  BG_BLUE     "\x1B[44m"
-#define  BG_MAGENTA  "\x1B[45m"
-#define  BG_CYAN     "\x1B[46m"
-#define  BG_BLANCO   "\x1B[47m"
-#define  BG_NARANJA  "\x1B[48;2;255;128;0m"
-#define  BG_LBLUE    "\x1B[48;2;53;149;240m"
-#define  BG_LGREEN   "\x1B[48;2;17;245;120m"
-#define  BG_GRAY     "\x1B[48;2;176;174;174m"
-#define  BG_ROSE     "\x1B[48;2;255;151;203m"
-#define  WHITE       "\x1B[37m"
-#define  RESET       "\x1b[0m"
+#define BG_RED "\x1B[41m"
+#define BG_BLUE "\x1B[44m"
+#define BG_BLACK "\x1B[40m"
+#define BG_GREEN "\x1B[42m"
+#define WHITE "\x1B[37m"
+#define RESET "\x1b[0m"
 
 using namespace std;
 
 class Carta {
+    
 public:
     string paleta[4] = {BG_RED, BG_BLUE, BG_BLACK, BG_GREEN};
-    int poder;
-    int color;
-    Carta();
-    Carta(int poder, int color);
+    int poder = 0;
+    int color = 0;
+    Carta() {};
+    Carta(int p, int c);
     void mostrar();
 };
 
-Carta::Carta() {
-    this->poder = 0;
-    this->color = 0;
-}
-
-Carta::Carta(int poder, int color) {
-    this->poder = poder;
-    this->color = color;
+Carta::Carta(int p, int c){
+    color = c;
+    poder = p;
+    
 }
 
 void Carta::mostrar() {
@@ -46,39 +35,48 @@ void Carta::mostrar() {
 
 class Mazo {
 public:
-    int n;
-    Carta Cartas[36];       //Hecho
-    Mazo();         
-    void barajar();         //Hecho
-    Carta repartir();       
-    void mostrar();         //Hecho
+    vector<Carta> cartas;
+
+    Mazo();
+    void barajar();
+    Carta repartir();
+    void mostrar();
 };
 
+
 Mazo::Mazo() {
-    int indice = 0;
-    n = 36;
-    for (int i = 0; i < 9; i++) {
+    
+    cartas.resize(36);
+    int indice = 0 ;
+    
+    for (int i = 1; i <= 9; i++) {
         for (int j = 0; j < 4; j++) {
-            indice = (4 * i) + j;
-            Cartas[indice].poder = i + 1;
-            Cartas[indice].color = j;
+             cartas[indice++] = Carta(i, j);
         }
     }
+    barajar();
 }
 
+
 void Mazo::barajar() {
-    Carta temp;
-    int indUno;
-    int indDos;
+    int idUno;
+    int idDos;
 
-    for (int i = 0; i < 50; i++) {
-
-        indUno = rand() % 36;
-        indDos = rand() % 36;
-        temp = Cartas[indUno];
-        Cartas[indUno] = Cartas[indDos];
-        Cartas[indDos] = temp;
+    for (int i = 0; i < 25; i++) {
+        idUno = rand() % cartas.size();
+        idDos = rand() % cartas.size();
+        swap(cartas[idUno], cartas[idDos]);
     }
+
+}
+
+
+Carta Mazo::repartir() {
+    
+    int indice = rand() % cartas.size(); 
+    Carta ca = cartas[indice];      
+    cartas.erase(cartas.begin() + indice); 
+    return ca;
 }
 
 void Mazo::mostrar() {
@@ -86,24 +84,196 @@ void Mazo::mostrar() {
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 4; j++) {
             indice = (4 * i) + j;
-            Cartas[indice].mostrar();
+            cartas[indice].mostrar();
         }
     }
 }
 
+
+class Mano {
+    
+    public:
+    
+    vector<Carta> cartas;
+    
+    Mano() {}
+    Mano(int cantidad, vector<Carta> &mazo);
+    void mostrar();
+    Carta lanzar(int ncartas);
+};
+
+Mano::Mano(int cantidad, vector<Carta> &mazo) {
+    
+    for (int i = 0; i < cantidad; i++) {
+        cartas.push_back(mazo.back());
+        mazo.pop_back();
+    }
+}
+
+void Mano::mostrar() {
+    for (size_t i = 0; i < cartas.size(); i++) {
+        cout << i + 1 << ". ";
+        cartas[i].mostrar();
+    }
+    cout << endl;
+}
+
+Carta Mano::lanzar(int ncartasd) {
+    Carta cs = cartas[ncartasd];
+    cartas.erase(cartas.begin() + ncartasd);
+    return cs;
+}
+
+class Jugador {
+public:
+    int id;
+    Mano mano;
+    vector<Carta> bodega;
+
+    Jugador(int i, int cantidadCartas, vector<Carta> &mazo);
+    void mostrarMano();
+    void almacenarCarta(Carta c);
+    int contarCartasBodega();
+    void mostrarBodega();
+};
+
+Jugador::Jugador(int i, int cantidadCartas, vector<Carta> &mazo) {
+    this->id = i;
+    this->mano = Mano(cantidadCartas, mazo);
+}
+
+
+void Jugador::mostrarMano() {
+    cout << "Jugador " << id << " - Mano: ";
+    mano.mostrar();
+}
+
+void Jugador::almacenarCarta(Carta c) {
+    bodega.push_back(c);
+}
+
+int Jugador::contarCartasBodega() {
+    return bodega.size();
+}
+
+void Jugador::mostrarBodega() {
+    cout << "Bodega del Jugador " << id << " (" << contarCartasBodega() << " cartas): ";
+    for (Carta c : bodega) {
+        c.mostrar();
+    }
+    cout << endl;
+}
+
+class Batalla {
+    
+    
+    public:
+    
+    int colorInicial = -1;
+    vector<pair<Jugador*, Carta>> cartasLanzadas;
+    bool primeraCarta = true;
+
+    void iniciarRonda();
+    void comparar(Jugador &jugador, Carta carta);
+    Jugador* definirGanadorRonda();
+};
+
+void Batalla::iniciarRonda() {
+    
+    cartasLanzadas.clear();  //clear para borrar todos los elementos que se lanzaron y comenzar o iniciar una ronda
+    colorInicial = -1;   //-1 para indicar que no se ha lanzado ninguna carta, por lo tanto no hay color establecido
+}
+
+
+void Batalla::comparar(Jugador &jugador, Carta carta) {
+    
+    if (cartasLanzadas.empty()) {    //se comprueba que el atributo cartasLanzadas este vacio para ejecutarse
+        colorInicial = carta.color;
+    }
+    cartasLanzadas.push_back({&jugador, carta});
+}
+
+Jugador* Batalla::definirGanadorRonda() {
+    if (cartasLanzadas.empty()) {
+        return 0; 
+    }
+
+    Jugador* ganador = 0;
+    int maxP = 0;
+
+    for (size_t i = 0; i < cartasLanzadas.size(); i++) {
+        Jugador* jugadorActual = cartasLanzadas[i].first;  //first para usar la primer variable guardada en cartasLanzadas (Jugador)
+        Carta cartaActual = cartasLanzadas[i].second;   //second para usar el segundo atributo guardado en cartasLanzadas (carta)
+
+        if (cartaActual.color == colorInicial && cartaActual.poder > maxP) {
+            maxP = cartaActual.poder;
+            ganador = jugadorActual;
+        }
+    }
+
+    return ganador;
+}
+
+class Juego {
+public:
+    vector<Jugador> jugadores;
+    Batalla btla;
+    Mazo mazo;
+    int numJugadores;
+
+    Juego(int n);
+    void jugar();
+    void determinarGanador();
+};
+
+Juego::Juego(int n) {
+    
+    this->numJugadores = n;
+    this->mazo = mazo;
+    int cartasPorJugador = 36 / n;
+    for (int i = 0; i < n; i++) jugadores.push_back(Jugador(i + 1, cartasPorJugador, mazo.cartas));
+    
+}
+
+/*void Juego::jugar() {
+    
+   cout << "Numero de rondas que se jugaran: 5 " <<endl;
+   for (int ronda = 0; ronda < 5; ronda++) {
+       cout << "\n--- Ronda " << ronda + 1 << " ---\n";
+       btla.iniciarRonda;
+       
+       for (Jugador &player : jugadores) {
+           player.mostrarMano;
+           int escoger;
+           do {
+               cout << "jugador" << player.id << "Que carta desea tirar" << player.mano.cartas.size() << " ) ";
+               while ()
+               
+           }
+       }
+      
+   }
+}*/
+
+
 int main() {
-    Carta unaCarta(2, 2);
-    unaCarta.mostrar();
-    cout << endl;
+    int nJugadores;
+    do {
+        cout << "Ingrese el número de jugadores (2, 3 o 4): ";
+        cin >> nJugadores;
+    } while (nJugadores < 2 || nJugadores > 4);
 
+    
+    
+    
+    
     Mazo baraja;
-    cout << "Mazo original: " << endl;
+    Mano maw;
+    
+    baraja.barajar();
+    baraja.repartir();
+    
     baraja.mostrar();
-    cout << endl;
-
-    baraja.barajar();  // Barajar el mazo
-    cout << "Mazo barajado: " << endl;
-    baraja.mostrar();
-
+    maw.mostrar();
     return 0;
 }
