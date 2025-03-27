@@ -18,10 +18,16 @@ public:
     string paleta[4] = {BG_RED, BG_BLUE, BG_BLACK, BG_GREEN};
     int poder = 0;
     int color = 0;
-    Carta() {};
+    Carta();
     Carta(int p, int c);
     void mostrar();
 };
+
+Carta::Carta() {
+
+    poder = 0;
+    color = 0;
+}
 
 Carta::Carta(int p, int c){
     color = c;
@@ -96,11 +102,13 @@ class Mano {
     
     vector<Carta> cartas;
     
-    Mano() {}
+    Mano();
     Mano(int cantidad, vector<Carta> &mazo);
     void mostrar();
     Carta lanzar(int ncartas);
 };
+
+Mano::Mano() {}
 
 Mano::Mano(int cantidad, vector<Carta> &mazo) {
     
@@ -125,7 +133,9 @@ Carta Mano::lanzar(int ncartasd) {
 }
 
 class Jugador {
-public:
+     
+    public:
+    
     int id;
     Mano mano;
     vector<Carta> boveda;
@@ -201,9 +211,9 @@ Jugador* Batalla::definirGanadorRonda() {
     Jugador* ganador = 0;
     int maxP = 0;
 
-    for (size_t i = 0; i < cartasLanzadas.size(); i++) {
-        Jugador* jugadorActual = cartasLanzadas[i].first;  //first para usar la primer variable guardada en cartasLanzadas (Jugador)
-        Carta cartaActual = cartasLanzadas[i].second;   //second para usar el segundo atributo guardado en cartasLanzadas (carta)
+    for (auto &entrada : cartasLanzadas) {
+        Jugador* jugadorActual = entrada.first;
+        Carta cartaActual = entrada.second;
 
         if (cartaActual.color == colorInicial && cartaActual.poder > maxP) {
             maxP = cartaActual.poder;
@@ -214,8 +224,10 @@ Jugador* Batalla::definirGanadorRonda() {
     return ganador;
 }
 
+
 class Juego {
-public:
+    
+    public:
     vector<Jugador> jugadores;
     Batalla btla;
     Mazo mazo;
@@ -236,11 +248,10 @@ Juego::Juego(int n) {
 }
 
 void Juego::jugar() {
-    int n_;
-    cout << "Numero de rondas que desea jugar: " << endl;
-    cin >> n_;
-    for (int ronda = 0; ronda < n_; ronda++) {
+    
+    for (int ronda = 0; ronda < 5; ronda++) {
         cout << "\n--- Ronda " << ronda + 1 << " ---\n";
+        std::cout << " " << std::endl;
         btla.iniciarRonda();
         for (Jugador &j : jugadores) {
             j.mostrarMano();
@@ -256,7 +267,10 @@ void Juego::jugar() {
         }
         Jugador* ganadorRonda = btla.definirGanadorRonda();
         if (ganadorRonda) {
-            cout << "Ganador de la ronda: Jugador " << ganadorRonda->id << "\n";
+            std::cout << " " << std::endl;
+            cout << "---Ganador de la ronda: Jugador ---" << ganadorRonda->id << "\n";
+            std::cout <<  " "<< std::endl;
+            std::cout << " " << std::endl;
             for (auto &entrada : btla.cartasLanzadas) {
                 ganadorRonda->almacenarCarta(entrada.second);
             }
@@ -271,6 +285,8 @@ void Juego::jugar() {
         }
     }
     if (!cartasDisponibles) {
+        cout << " "<< endl;
+        
         cout << "\nLas cartas se han agotado. Fin del juego.\n";
         break;
     }
@@ -289,6 +305,7 @@ void Juego::determinarGanador() {
             ganador = &j;
         }
     }
+    cout <<" "  << endl;
     cout << "\nEl ganador final es el Jugador " << ganador->id << " con " << ganador->contarCartasBoveda() << " cartas en la bodega!\n";
 }
 
