@@ -1,19 +1,14 @@
-#include <iostream>
-#include <random>
-#include <algorithm>
+#include "Juego.h"
+using namespace std;
 int main() {
-    Carta unaCarta(2, 2);
-    unaCarta.mostrar();
-    cout << endl;
+    int nJugadores;
+    do {
+        cout << "Ingrese el número de jugadores (2, 3 o 4): ";
+        cin >> nJugadores;
+    } while (nJugadores < 2 || nJugadores > 4);
 
-    Mazo baraja;
-    cout << "Mazo original: " << endl;
-    baraja.mostrar();
-    cout << endl;
-
-    baraja.barajar();  // Barajar el mazo
-    cout << "Mazo barajado: " << endl;
-    baraja.mostrar();
+    Juego prueba0(nJugadores);
+    prueba0.jugar();
 
     return 0;
 }
