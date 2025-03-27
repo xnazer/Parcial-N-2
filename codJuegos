@@ -18,16 +18,11 @@ public:
     string paleta[4] = {BG_RED, BG_BLUE, BG_BLACK, BG_GREEN};
     int poder = 0;
     int color = 0;
-    Carta();
+    Carta(){}
     Carta(int p, int c);
     void mostrar();
 };
 
-Carta::Carta() {
-
-    poder = 0;
-    color = 0;
-}
 
 Carta::Carta(int p, int c){
     color = c;
@@ -56,7 +51,7 @@ Mazo::Mazo() {
     int indice = 0 ;
     
     for (int i = 1; i <= 9; i++) {
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j <= 3; j++) {
              cartas[indice++] = Carta(i, j);
         }
     }
@@ -102,13 +97,12 @@ class Mano {
     
     vector<Carta> cartas;
     
-    Mano();
+    Mano(){}
     Mano(int cantidad, vector<Carta> &mazo);
     void mostrar();
     Carta lanzar(int ncartas);
 };
 
-Mano::Mano() {}
 
 Mano::Mano(int cantidad, vector<Carta> &mazo) {
     
@@ -203,17 +197,15 @@ void Batalla::comparar(Jugador &jugador, Carta carta) {
     cartasLanzadas.push_back({&jugador, carta});
 }
 
+
 Jugador* Batalla::definirGanadorRonda() {
-    if (cartasLanzadas.empty()) {
-        return 0; 
-    }
 
     Jugador* ganador = 0;
     int maxP = 0;
 
-    for (auto &entrada : cartasLanzadas) {
-        Jugador* jugadorActual = entrada.first;
-        Carta cartaActual = entrada.second;
+    for (int i = 0; i < cartasLanzadas.size(); i++) {
+        Jugador* jugadorActual = cartasLanzadas[i].first;  //first para usar la primer variable guardada en cartasLanzadas (Jugador)
+        Carta cartaActual = cartasLanzadas[i].second;   //second para usar el segundo atributo guardado en cartasLanzadas (carta)
 
         if (cartaActual.color == colorInicial && cartaActual.poder > maxP) {
             maxP = cartaActual.poder;
@@ -223,7 +215,6 @@ Jugador* Batalla::definirGanadorRonda() {
 
     return ganador;
 }
-
 
 class Juego {
     
@@ -249,60 +240,45 @@ Juego::Juego(int n) {
 
 void Juego::jugar() {
     
-    for (int ronda = 0; ronda < 5; ronda++) {
+    for (int ronda = 0; ronda < 3; ronda++) {
         cout << "\n--- Ronda " << ronda + 1 << " ---\n";
-        std::cout << " " << std::endl;
+        cout << " " << endl;
         btla.iniciarRonda();
-        for (Jugador &j : jugadores) {
-            j.mostrarMano();
+        for (Jugador &player : jugadores) {
+            player.mostrarMano();
             int eleccion;
             do {
-                cout << "Jugador " << j.id << ", elige una carta para lanzar (1 - " << j.mano.cartas.size() << "): ";
+                cout << "Jugador " << player.id << ", elige una carta para lanzar (1 - " << player.mano.cartas.size() << "): ";
                 cin >> eleccion;
-            } while (eleccion < 1 || eleccion > j.mano.cartas.size());
+            } while (eleccion < 1 || eleccion > player.mano.cartas.size());
             
-            Carta lanzada = j.mano.lanzar(eleccion - 1);
-            cout << "Jugador " << j.id << " lanza: "; lanzada.mostrar(); cout << endl;
-            btla.comparar(j, lanzada);
+            Carta lanzada = player.mano.lanzar(eleccion - 1);
+            cout << "Jugador " << player.id << " lanza: "; lanzada.mostrar(); cout << endl;
+            btla.comparar(player, lanzada);
         }
         Jugador* ganadorRonda = btla.definirGanadorRonda();
         if (ganadorRonda) {
-            std::cout << " " << std::endl;
+            cout << " " << endl;
             cout << "---Ganador de la ronda: Jugador ---" << ganadorRonda->id << "\n";
-            std::cout <<  " "<< std::endl;
-            std::cout << " " << std::endl;
+            cout <<  " "<< endl;
+            cout << " " << endl;
             for (auto &entrada : btla.cartasLanzadas) {
                 ganadorRonda->almacenarCarta(entrada.second);
             }
-        } else {
-            cout << "Nadie ganó la ronda, las cartas quedan descartadas.\n";
-        }
-         bool cartasDisponibles = false;
-    for (Jugador &j : jugadores) {
-        if (!j.mano.cartas.empty()) {
-            cartasDisponibles = true;
-            break;
-        }
-    }
-    if (!cartasDisponibles) {
-        cout << " "<< endl;
-        
-        cout << "\nLas cartas se han agotado. Fin del juego.\n";
-        break;
-    }
+        } 
     }
     
     determinarGanador();
 }
 
 void Juego::determinarGanador() {
-    for (Jugador &j : jugadores) {
-        j.mostrarBoveda();
+    for (Jugador &player : jugadores) {
+        player.mostrarBoveda();
     }
     Jugador *ganador = &jugadores[0];
-    for (Jugador &j : jugadores) {
-        if (j.contarCartasBoveda() > ganador->contarCartasBoveda()) {
-            ganador = &j;
+    for (Jugador &player : jugadores) {
+        if (player.contarCartasBoveda() > ganador->contarCartasBoveda()) {
+            ganador = &player;
         }
     }
     cout <<" "  << endl;
