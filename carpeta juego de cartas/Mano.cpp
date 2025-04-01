@@ -13,7 +13,7 @@ Mano::Mano(int cantidad, vector<Carta> &mazo) {
 }
 
 void Mano::mostrar() {
-    for (size_t i = 0; i < cartas.size(); i++) {
+    for (int i = 0; i < cartas.size(); i++) {
         cout << i + 1 << ". ";
         cartas[i].mostrar();
     }
