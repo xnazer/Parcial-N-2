@@ -1,4 +1,4 @@
-#include "Juego.h"
+#include "./Juego.h"
 using namespace std;
 int main() {
     int nJugadores;
