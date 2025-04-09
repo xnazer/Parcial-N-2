@@ -1,6 +1,6 @@
 # Parcial-N-2
 **Juego de Cartas**
-
+modificado 
 En este juego se compite entre los jugadores para determinar quien es mejor acumulando cartas.
 
 **Reglas del Juego**
