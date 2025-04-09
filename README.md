@@ -1,6 +1,6 @@
 # Parcial-N-2
 **Juego de Cartas**
-modificado 
+ 
 En este juego se compite entre los jugadores para determinar quien es mejor acumulando cartas.
 
 **Reglas del Juego**
@@ -26,6 +26,6 @@ En este juego se compite entre los jugadores para determinar quien es mejor acum
    - El ganador de la ronda almacena todas las cartas jugadas en su bóveda.
 4. Tras completar todas las rondas, el jugador con más cartas en su bóveda es declarado el vencedor.
 
-
+Nueva modificacion
 
 ![Juego Cartas drawio](https://github.com/user-attachments/assets/427776ed-5e5e-4d7b-bf5e-1bb470f73b0a)
