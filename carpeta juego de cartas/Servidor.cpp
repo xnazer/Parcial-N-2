@@ -48,11 +48,11 @@ int main() {
         }
     }
 
-    // Iniciar juego
+    
     Juego juego(numJugadores);
     juego.iniciarPartidaMultijugador(clientes);
 
-    // Cerrar conexiones
+    
     for (auto& client : clientes) {
         closesocket(client);
     }
